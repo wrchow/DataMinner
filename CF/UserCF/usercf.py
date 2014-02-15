@@ -67,7 +67,7 @@ def user_sim(ratings_matrix):
 def calRecMatrix(ratings_matrix, items, userSim):
 	recMatrix = {}
 	for userId_k in userSim.keys():
-		Score = 0.0
+		Score_ij = 0.0
 		for itemId_i in items:
 			if itemId_i in ratings_matrix[userId_k]:
 				continue
