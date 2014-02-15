@@ -22,12 +22,16 @@ else:
 # create N*M ratings matrix by ratings.dat
 def load_data():
 	ratings_matrix = {}
+	itemSet = set()	
+	userSet = set()
 	for line in open(data_path):
 		(userId, itemId, rating, timestamp) = line.strip().split('\t')	
 		ratings_matrix.setdefault(userId,{})
 		ratings_matrix[userId][itemId] = float(rating)
+		itemSet.add(itemId)
+		userSet.add(userId)
 
-	return ratings_matrix  
+	return ratings_matrix, itemSet, userSet  
 
 # distance functions
 
@@ -57,9 +61,25 @@ def user_sim(ratings_matrix):
 	return userSim
 	
 
+# get top N rec items
+def calRecMatrix(ratings_matrix, items, userSim):
+	recMatrix = {}
+	for userId_k in userSim.keys():
+		Score = 0.0
+		for itemId_i in items:
+			if itemId_i in ratings_matrix[userId_k]:
+				continue
+			for sim_user_j in userSim[userId_k]:
+				Score_ij += ratings_matrix[itemId_i][sim_user_j] * userSim[userId_k][sim_user_j]
+			recMatrix.setdefault(userId_k, {}) 
+			recMatrix[userId_k][itemId_i] = Score_ij
+
+	return recMatrix
+
+import pickle
 if __name__ == "__main__":
 	
-	ratings_matrix = load_data()
+	ratings_matrix, itemSet, userSet  = load_data()
 	print 'import len of %d users\' data from %s' % (len(ratings_matrix), data_path)
 	
 	u1 = ratings_matrix[ratings_matrix.keys()[0]]
@@ -70,14 +90,14 @@ if __name__ == "__main__":
 	print 'calculate the user simmilarity matrix from %s' % time.ctime()
 	userSim = user_sim(ratings_matrix)
 	print 'finish user sim matrix of len %d at %s' % (len(userSim), time.ctime())
+	sim_output = open('Movielens.UserSim.1m', 'wb')
+	pickle.dump(userSim, sim_output)
+	sim_output.close()	
+
+	print 'calculate the rec matrix from %s' % time.ctime()
+	recMatrix =	calRecMatrix(ratings_matrix, itemSet, userSim)
+	print 'finish the rec matrix at %s' % time.ctime()
+	rec_output = open('Movielens.Recs.1m', 'wb')
+	pickle.dum(recMatrix, rec_output)
+	rec_output.close()
 	
-	
-	
-
-
-
-
-
-
-
-
