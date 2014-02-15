@@ -72,7 +72,12 @@ def calRecMatrix(ratings_matrix, items, userSim):
 			if itemId_i in ratings_matrix[userId_k]:
 				continue
 			for sim_user_j in userSim[userId_k]:
-				Score_ij += ratings_matrix[itemId_i][sim_user_j] * userSim[userId_k][sim_user_j]
+				if ratings_matrix[sim_user_j].get(itemId_i) > 0 :
+					try:
+						Score_ij += ratings_matrix[sim_user_j][itemId_i]  * userSim[userId_k][sim_user_j]
+					except:
+						print 'itemId_i=%s, sim_user_j=%s, userId_k=%s' % (itemId_i, sim_user_j, userId_k)
+
 			recMatrix.setdefault(userId_k, {}) 
 			recMatrix[userId_k][itemId_i] = Score_ij
 
@@ -93,21 +98,25 @@ if __name__ == "__main__":
 	u2 = ratings_matrix[ratings_matrix.keys()[1]]
 	d12 = euclidean_dist(u1, u2)
 	print 'euclidean dist of u1 and u2 is %f' % d12 
-	
-	print 'calculate the user simmilarity matrix from %s' % time.ctime()
-	userSim = user_sim(ratings_matrix)
-	print 'finish user sim matrix of len %d at %s' % (len(userSim), time.ctime())
-	sim_output = open('Movielens.UserSim.1m', 'wb')
-	pickle.dump(userSim, sim_output)
-	sim_output.close()	
+
+	#print 'calculate the user simmilarity matrix from %s' % time.ctime()
+	#userSim = user_sim(ratings_matrix)
+	#print 'finish user sim matrix of len %d at %s' % (len(userSim), time.ctime())
+	#sim_output = open('Movielens.UserSim.1m', 'wb')
+	#pickle.dump(userSim, sim_output)
+	#sim_output.close()	
+
+	sim_input = open('Movielens.UserSim.1m', 'rb')
+	userSim = pickle.load(sim_input)
+	sim_input.close()
 
 	print 'calculate the rec matrix from %s' % time.ctime()
 	recMatrix =	calRecMatrix(ratings_matrix, itemSet, userSim)
 	print 'finish the rec matrix at %s' % time.ctime()
 	rec_output = open('Movielens.Recs.1m', 'wb')
-	pickle.dum(recMatrix, rec_output)
+	pickle.dump(recMatrix, rec_output)
 	rec_output.close()
 
 	print 'rec for user 182:'
 	print getRec(recMatrix, '182', 20)
-			
+		

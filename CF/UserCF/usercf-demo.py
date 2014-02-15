@@ -43,8 +43,9 @@ from operator import itemgetter, attrgetter
 from math import sqrt
 
 def load_data():  
-    filename_user_movie = 'ml-100k/u.data'
-    filename_movieInfo = 'ml-100k/u.item'
+	#path = '../../data/movielens/'
+    filename_user_movie =  '../../data/movielens/ml-100k/u.data'
+    filename_movieInfo = '../../data/movielens/ml-100k/u.item'
 
     user_movie = {}
     for line in open(filename_user_movie):
@@ -139,13 +140,21 @@ def getRecommendations(user, user_movie, movies, userSim, N):
     pred = sorted(pred.items(), key=itemgetter(1), reverse=True)[0:10]
     return pred  
 
+import time
+import pickle
 
 if __name__ == "__main__":
     # load data
     user_movie, movies = load_data()
 
     # Calculate user similarity
+    #print 'Calculate user similarity from %s' % time.ctime()
+    print 'Calculate user similarity from %s' % time.ctime()
     userSim = calUserSim(user_movie)
+    #print 'Finish user similarity at %s' % time.ctime()
+    print 'Finish user similarity at %s' % time.ctime()
+    sim_output = open('MovieLens.UserSim.1m.demo', 'wb')
+    pickle.dump(userSim, sim_output)
 
     # Recommend
     pred = getRecommendations('182', user_movie, movies, userSim, 20)
@@ -153,6 +162,6 @@ if __name__ == "__main__":
     # display recommend result (top-10 results)
     for i, rating in pred:
         print 'film: %s,  rating: %s' % (movies[i], rating)
-  
-  
+   
+    print 'Finish user rec at %s' % time.ctime()
     
