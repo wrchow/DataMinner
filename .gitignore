@@ -1,0 +1,8 @@
+*.dat
+*.data
+*.config
+
+debug/
+release/
+obj/
+data/
