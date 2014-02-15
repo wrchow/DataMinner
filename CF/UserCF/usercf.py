@@ -8,7 +8,9 @@
 5. 根据用户相似度矩阵，进行TopN推荐；
 '''
 
+import time
 import sys
+from operator import itemgetter, attrgetter
 from math import sqrt
 
 # user id | item id | rating | timestamp
@@ -76,6 +78,11 @@ def calRecMatrix(ratings_matrix, items, userSim):
 
 	return recMatrix
 
+def getRec(recMatrix, user, N):
+	rec_v = recMatrix[user]
+	pred = sorted(rec_v.items(), key=itemgetter(1), reverse=True)[0:N]
+	return pred 
+
 import pickle
 if __name__ == "__main__":
 	
@@ -100,4 +107,7 @@ if __name__ == "__main__":
 	rec_output = open('Movielens.Recs.1m', 'wb')
 	pickle.dum(recMatrix, rec_output)
 	rec_output.close()
-	
+
+	print 'rec for user 182:'
+	print getRec(recMatrix, '182', 20)
+			
