@@ -1,5 +1,8 @@
 # -*- coding:utf-8 -*-
 '''
+原始版本,使用欧氏距离，未做优化;
+2014-02-15
+
 单机版本的usercf算法:
 1. 输入打分数组，如movielens数据的ratings.dat，格式为<userid,movieid,pref>；
 2. 构建用户向量，物品向量，从而得到打分N*M的矩阵；
