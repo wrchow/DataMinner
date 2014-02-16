@@ -3,7 +3,12 @@
 *.swap
 *.data
 *.config
+*.o
+*.obj
 
+bin/
+lib/
+libs/
 debug/
 release/
 obj/
