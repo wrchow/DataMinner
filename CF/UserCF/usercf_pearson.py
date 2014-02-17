@@ -30,17 +30,18 @@ from operator import itemgetter
 def load_data(data_path):
 
 	users_items = {}
-	itemSet = set()
+	#itemSet = set()
 	for line in open(data_path):
 		try:
+		#	print line
 			(userId, itemId, rating, timestamp) = line.strip().split('\t')
 			users_items.setdefault(userId, {})
 			users_items[userId][itemId] = float(rating)
-			itemSet.add(itemId)
+			#itemSet.add(itemId)
 		except:
 			print 'load data error in split by \\t'
 
-	return users_items, itemSet
+	return users_items#, itemSet
 
 # 2
 def calCoItems(users_items):
@@ -149,17 +150,15 @@ def calRecMatrix(users_items, uSimMat, K):
 	
 	return recMat
 
+
+
+
 import time
 import pickle
 import sys
-if __name__ == '__main__':
-	
-	if len(sys.argv) < 2:
-		print 'Usage: python usercf datapath'
-		sys.exit(-1)
 
-	datapath = sys.argv[1]
-	users_items, itemSet = load_data(datapath)
+def test1(datapath):
+	users_items = load_data(datapath)
 	
 	print 'cal user similarity matrix begin at %s' % time.ctime()
 	simMat = calUserSimMatrix(users_items)
@@ -178,3 +177,36 @@ if __name__ == '__main__':
 	print 'rec for user id 182:'
 	print recMat['182'][0:20]
 
+
+# user movielens-100k u_i.base adn u_i.test
+def evalue_model(datapath, M):
+	for i in range(1, M + 1):
+		# training
+		fname = 'u' + str(i) + '.base'
+		print 'training file of %s' % datapath + fname
+		users_items = load_data(datapath + fname)
+		#print len(users_items)
+		simMat = calUserSimMatrix(users_items)
+		sim_output = open(datapath + fname + '.simMat', 'wb')
+		pickle.dump(simMat, sim_output)
+		sim_output.close()
+		# testing
+		#fname = 'u' + str(i) + '.test'
+		#print 'test file of %s' % fname
+		#error:	users_items = load_data(datapath + fname)
+		recMat = calRecMatrix(users_items, simMat, 20)
+		rec_output = open(datapath + fname + '.recMat', 'wb')
+		pickle.dump(recMat, rec_output)
+		rec_output.close()
+		
+
+if __name__ == '__main__':
+	
+	if len(sys.argv) < 2:
+		print 'Usage: python usercf datapath'
+		sys.exit(-1)
+
+	datapath = sys.argv[1]
+	#test1()
+	evalue_model(datapath, 1)
+	

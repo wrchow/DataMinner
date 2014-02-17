@@ -1,3 +1,8 @@
+#20140216
+使用pearson距离计算usercf算法，并做优化；
+对算法进行评测，usercf_evaluate.py;
+
+
 #20140215
 使用http://grouplens.org/datasets/movielens/的数据，用python完成单机版的ucf算法。
 
